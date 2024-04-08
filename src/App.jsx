@@ -1,9 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import FormAdd from "./FormAdd";
+import FormDetail from "./FormDetail";
 import Home from "./Home";
-import AuthLayout from "./AuthLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
+import RootLayout from "./layouts/RootLayout";
 import Login from "./Login";
-import RootLayout from "./RootLayout";
-import DashboardLayout from "./DashboardLayout";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,14 @@ const router = createBrowserRouter([
           {
             path: "/",
             element: <Home />,
+          },
+          {
+            path: "/form",
+            element: <FormDetail />,
+          },
+          {
+            path: "/form-add",
+            element: <FormAdd />,
           },
         ],
       },
