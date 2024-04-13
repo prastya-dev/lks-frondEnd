@@ -13,24 +13,21 @@ Packages:
 
 Installations
 
-```
-sh
+```sh
 npm install
 
 ```
 
 Run dev server
 
-```
-sh
+```sh
 npm run dev
 
 ```
 
 Build for production
 
-```
-sh
+```sh
 npm run build
 
 ```
