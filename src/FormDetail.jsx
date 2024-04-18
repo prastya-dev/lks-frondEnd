@@ -2,7 +2,7 @@ import { ClipboardIcon } from "@heroicons/react/20/solid";
 import QuestionForm from "./components/QuestionForm";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 
 const exampleQuestion = {
@@ -15,32 +15,37 @@ const exampleQuestion = {
 function FormAdd() {
   const [questions, setQuestions] = useState([exampleQuestion]);
   const [dataa, setDatt] = useState({});
+  const [errorr, setError] = useState(false);
   const { slug } = useParams();
-const url = "http://127.0.0.1:8000/api/v1";
- const apikey = localStorage.getItem('apikey');
-
+  const url = "http://127.0.0.1:8000/api/v1";
+  const apikey = localStorage.getItem('apikey');
+  const navigate = useNavigate();
 
 
 
  const detailForm = async () => {
   try{
     const fetchDetail = await axios.get(url + '/forms/' + slug, {headers:{"Authorization" : `Bearer ${apikey}`} });
-    setDatt(fetchDetail.data.data);
-    
-    
+    setDatt(fetchDetail.data.data); 
     // console.log(fetchDetail);
   }catch(error){
-    console.log(error);
+    setError(true);
+    console.log(error.response.data.message);
+    navigate('./');
+    
   }
 }
 
 
-
+if (errorr) {
+  navigate('/'); // Redirect to home page if there is an error
+  return null; // Render nothing else
+}
 
 
 /////////
 useEffect(() => {
-
+  
   detailForm();
 },[]);
 
@@ -62,8 +67,30 @@ useEffect(() => {
  }catch(error){
  console.log(error);
  }
-
   }
+  ///
+  const createQ = async (e) => {
+    try{
+     const deleteQuest = await axios.post(
+       url + '/forms/' + slug + `/question`, 
+       {
+          "name" : e.name,
+          "choiche_type" : e.choiceType,
+          "choices" : "value",
+          "is_required": true
+       },
+       {headers:{
+         "Authorization" : `Bearer ${apikey}`,
+          "Accept" : "apllication/json"
+       }}
+   
+     );
+     detailForm();
+    }catch(error){
+    console.log(error);
+    }
+     }
+  
 
 
 
@@ -139,9 +166,9 @@ useEffect(() => {
               disabled={q.is_saved}
               name={q.name}
               onSave={(data) => {
-                
                 console.log("save", data);
-                setQuestions(questions.map((q, i) => (i == idx ? data : q)));
+                createQ(data);
+                
               }}
               onDelete={(data) => {
                 console.log("delete", data);

@@ -13,6 +13,22 @@ QuestionForm.propTypes = {
 function QuestionForm(props) {
   const { name, choiceType, disabled, onSave, onDelete } = props;
 
+  // State untuk menyimpan opsi tambahan yang akan ditampilkan
+  const [additionalOptions, setAdditionalOptions] = useState([]);
+  const[dist, setDis] = useState(true);
+
+  // Fungsi untuk menambah opsi tambahan
+  const addAdditionalOption = () => {
+    setAdditionalOptions([...additionalOptions, `Option ${additionalOptions.length + 1}`]);
+  };
+
+  // Fungsi untuk menghapus opsi tambahan
+  const removeAdditionalOption = (optionIndex) => {
+    setAdditionalOptions(
+      additionalOptions.filter((_, index) => index !== optionIndex)
+    );
+  };
+
   const [nameInput, setNameInput] = useState("");
   const [choiceTypeInput, setChoiceTypeInput] = useState(1);
 
@@ -23,9 +39,11 @@ function QuestionForm(props) {
     if (choiceType) {
       setChoiceTypeInput(choiceType);
     }
+    // Reset opsi tambahan saat pilihan berubah
+    setAdditionalOptions([]);
   }, [name, choiceType]);
 
-  const data = { name, choiceType };
+  const data = { name, choiceType, additionalOptions }; // Menambah properti additionalOptions pada objek data
 
   const handleSave = () => {
     onSave(data);
@@ -54,9 +72,55 @@ function QuestionForm(props) {
             value={choiceTypeInput}
             onChange={(item) => {
               setChoiceTypeInput(item.id);
+              // Menambah atau menghapus opsi tambahan berdasarkan pilihan
+              if (item.value === 5 || item.value === 6 || item.value === 7) {
+                // Hanya tambahkan opsi tambahan jika belum ada
+                setDis(false);
+                if (additionalOptions.length === 0) {
+                  addAdditionalOption();
+                }
+              } else {
+                // Jika bukan multiple choice, dropdown, atau checkboxes, hapus semua opsi tambahan
+                setAdditionalOptions([]);
+                setDis(true);
+                
+              }
             }}
           />
         </div>
+      </div>
+
+      {/* Menampilkan opsi tambahan */}
+      <div className="flow-roott">
+        {additionalOptions.map((option, index) => (
+          <div className="flex gap-2 p-1">
+          <input
+           key={index}
+            disabled={disabled}
+            type="text"
+            className="block w-25% border-b-5 rounded-md"
+            ></input>
+            <button
+              className="ml-1 text-red-500"
+              onClick={() => removeAdditionalOption(index)}
+            >
+              (Remove)
+            </button>
+          
+          </div>
+        ))}
+      </div>
+
+      {/* Tombol untuk menambah opsi tambahan */}
+      <div>
+        {!disabled && !dist &&( // Hanya tampilkan tombol jika tidak dalam mode disabled
+          <button
+            className="bg-gray-200 px-2 py-1 rounded-md text-sm text-gray-700 hover:bg-gray-300"
+            onClick={addAdditionalOption}
+          >
+            Add Option
+          </button>
+        )}
       </div>
 
       <div className="border-t border-gray-300 pt-4 flex gap-4 justify-end">
@@ -78,5 +142,6 @@ function QuestionForm(props) {
     </div>
   );
 }
+
 
 export default QuestionForm;
