@@ -22,27 +22,27 @@ const url = "http://127.0.0.1:8000/api/v1";
 
 
 
-
-useEffect(() => {
-  const detailForm = async () => {
-    try{
-      const fetchDetail = await axios.get(url + '/forms/' + slug, {headers:{"Authorization" : `Bearer ${apikey}`} });
-      setDatt(fetchDetail.data.data);
-      
-      
-      // console.log(fetchDetail);
-    }catch(error){
-      console.log(error);
-    }
+ const detailForm = async () => {
+  try{
+    const fetchDetail = await axios.get(url + '/forms/' + slug, {headers:{"Authorization" : `Bearer ${apikey}`} });
+    setDatt(fetchDetail.data.data);
+    
+    
+    // console.log(fetchDetail);
+  }catch(error){
+    console.log(error);
   }
+}
 
 
 
 
 
-  ////////////////////////////////////
+/////////
+useEffect(() => {
+
   detailForm();
-},[questions]);
+},[]);
 
 
 
@@ -52,15 +52,17 @@ useEffect(() => {
   const deleteQ = async (e) => {
  try{
   const deleteQuest = await axios.delete(
-    url + '/forms/' + slug + `/questions/` + e, 
+    url + '/forms/' + slug + `/question/` + e, 
     {headers:{
       "Authorization" : `Bearer ${apikey}`
     }}
+
   );
+  detailForm();
  }catch(error){
  console.log(error);
  }
- deleteQuest();
+
   }
 
 
