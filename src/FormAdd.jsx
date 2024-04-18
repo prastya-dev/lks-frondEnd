@@ -1,8 +1,67 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 function FormAdd() {
+
+ const [name, setName] = useState('');
+ const [slug, setSlug] = useState('');
+ const [description, setDes] = useState('');
+ const [allowedDomain, setDom] = useState('');
+ const [limit, setlimit] = useState(false);
+ const [error, setError] = useState('');
+ const apikey = localStorage.getItem('apikey');
+ const navigation = useNavigate();
+
+useEffect(() => {
+
+  
+},[])
+const limittt = () =>{
+  setlimit(current => !current)
+}
+ const heandleSubmit = async (e) =>{
+  e.preventDefault();
+  try{
+   const fechData = await axios.post(
+    'http://127.0.0.1:8000/api/v1/forms', 
+    {
+      name:name,
+      slug:slug,
+      description:description,
+      allowed_domain:allowedDomain, 
+      limit_one_response:limit,
+    },
+    {
+      headers:{
+        "Authorization" : `Bearer ${apikey}`,
+        "Accept" : "application/json"
+      },
+    }
+  
+  );
+  console.log(fechData);
+  navigation('/');
+  }catch(error){
+    setError(error.response.data.message);
+  }
+
+ }
+
+
+
+
+
+
+
+
+
+
   return (
     <div>
+     
       <h1 className="mb-6 text-xl font-bold">Create Form</h1>
-
+ <form className="space-y-6" action="#" method="POST" onSubmit={heandleSubmit}>
       <div className="mb-2">
         <label
           htmlFor="name"
@@ -12,6 +71,8 @@ function FormAdd() {
         </label>
         <div className="relative mt-2 rounded-md shadow-sm">
           <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
             type="text"
             name="name"
             id="name"
@@ -29,6 +90,8 @@ function FormAdd() {
         </label>
         <div className="relative mt-2 rounded-md shadow-sm">
           <input
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
             type="text"
             name="slug"
             id="slug"
@@ -46,6 +109,8 @@ function FormAdd() {
         </label>
         <div className="relative mt-2 rounded-md shadow-sm">
           <input
+          value={description}
+          onChange={(e) => setDes(e.target.value)}
             type="text"
             name="desc"
             id="desc"
@@ -63,6 +128,8 @@ function FormAdd() {
         </label>
         <div className="relative mt-2 rounded-md shadow-sm">
           <input
+          value={allowedDomain}
+          onChange={(e) => setDom(e.target.value)}
             type="text"
             name="allowed_domain"
             id="allowed_domain"
@@ -78,6 +145,8 @@ function FormAdd() {
         <div className="mt-2">
           <input
             type="checkbox"
+            value={limit}
+           onChange={limittt}
             className="peer sr-only opacity-0"
             id="toggle"
           />
@@ -98,6 +167,8 @@ function FormAdd() {
           Create Form
         </button>
       </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      </form>
     </div>
   );
 }

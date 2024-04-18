@@ -6,6 +6,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import RootLayout from "./layouts/RootLayout";
 import Login from "./Login";
+import Logout from "./Logout";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
             element: <Home />,
           },
           {
-            path: "/form",
+            path: "/logout",
+            element: <Logout/>,
+          },
+          {
+            path: "/form/:slug",
             element: <FormDetail />,
           },
           {

@@ -1,6 +1,9 @@
 import { ClipboardIcon } from "@heroicons/react/20/solid";
 import QuestionForm from "./components/QuestionForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+
 
 const exampleQuestion = {
   id: null,
@@ -11,6 +14,38 @@ const exampleQuestion = {
 
 function FormAdd() {
   const [questions, setQuestions] = useState([exampleQuestion]);
+  const [dataa, setDatt] = useState({});
+  const { slug } = useParams();
+const url = "http://127.0.0.1:8000/api/v1";
+ const apikey = localStorage.getItem('apikey');
+
+
+
+
+
+useEffect(() => {
+  const detailForm = async () => {
+    try{
+      const fetchDetail = await axios.get(url + '/forms/' + slug, {headers:{"Authorization" : `Bearer ${apikey}`} });
+      setDatt(fetchDetail.data.data);
+      
+      
+      // console.log(fetchDetail);
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+
+
+
+
+  ////////////////////////////////////
+  detailForm();
+},[questions]);
+
+
+
 
   const addQuestion = () => {
     setQuestions([...questions, exampleQuestion]);
@@ -19,19 +54,19 @@ function FormAdd() {
   return (
     <div>
       <h1 className="mb-6 text-xl font-bold">Form Detail</h1>
-
+      
       <div className="mb-2">
         <p className="block text-sm font-medium leading-6 text-gray-900">
           Name
         </p>
-        <p>Nama Form</p>
+        <p>{dataa.name}</p>
       </div>
 
       <div className="mb-4">
         <p className="block text-sm font-medium leading-6 text-gray-900">
           Description
         </p>
-        <p>Deskripsi Form</p>
+        <p> {dataa.description}</p>
       </div>
 
       <div className="mb-2">
@@ -57,8 +92,26 @@ function FormAdd() {
         <h1 className="mb-6 text-xl font-bold">Questions</h1>
 
         <div className="mb-4 flex flex-col gap-4">
+          {dataa.questions?.map((q, idx) => (
+            <QuestionForm
+              formid= {dataa.id}
+              key={idx}
+              disabled={q.is_saved}
+              name={q.name}
+              onSave={(data) => {
+                console.log("save", data);
+                setDatt(dataa.questions.map((q, i) => (i == idx ? data : q)));
+              }}
+              onDelete={(data) => {
+                console.log("delete", data);
+                setDatt(dataa.questions.filter((_, i) => i != idx));
+              }}
+            />
+          ))}
+          {/* ////////////////////////////////////// */}
           {questions.map((q, idx) => (
             <QuestionForm
+              formid= {dataa.id}
               key={idx}
               disabled={q.is_saved}
               name={q.name}
