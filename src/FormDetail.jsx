@@ -47,6 +47,26 @@ useEffect(() => {
 
 
 
+
+///delete func
+  const deleteQ = async (e) => {
+ try{
+  const deleteQuest = await axios.delete(
+    url + '/forms/' + slug + `/questions/` + e, 
+    {headers:{
+      "Authorization" : `Bearer ${apikey}`
+    }}
+  );
+ }catch(error){
+ console.log(error);
+ }
+ deleteQuest();
+  }
+
+
+
+
+
   const addQuestion = () => {
     setQuestions([...questions, exampleQuestion]);
   };
@@ -96,15 +116,16 @@ useEffect(() => {
             <QuestionForm
               formid= {dataa.id}
               key={idx}
-              disabled={q.is_saved}
+              disabled={true}
               name={q.name}
               onSave={(data) => {
                 console.log("save", data);
-                setDatt(dataa.questions.map((q, i) => (i == idx ? data : q)));
+                
               }}
               onDelete={(data) => {
-                console.log("delete", data);
-                setDatt(dataa.questions.filter((_, i) => i != idx));
+                deleteQ(q.id);
+                console.log("delete", q);
+               
               }}
             />
           ))}
@@ -116,6 +137,7 @@ useEffect(() => {
               disabled={q.is_saved}
               name={q.name}
               onSave={(data) => {
+                
                 console.log("save", data);
                 setQuestions(questions.map((q, i) => (i == idx ? data : q)));
               }}
